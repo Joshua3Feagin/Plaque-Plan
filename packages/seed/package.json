@@ -1,0 +1,36 @@
+{
+  "name": "@maxout/seed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seed data (CDT catalog, plans, Rivera demo household) and seed script for Plaque & Plan",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./catalog": {
+      "source": "./src/catalog.ts",
+      "default": "./src/catalog.ts"
+    },
+    "./household": {
+      "source": "./src/household.ts",
+      "default": "./src/household.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "check": "tsx src/check.ts",
+    "seed": "tsx src/seed.ts"
+  },
+  "dependencies": {
+    "@maxout/engine": "*"
+  },
+  "devDependencies": {
+    "aws-amplify": "^6.6.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
