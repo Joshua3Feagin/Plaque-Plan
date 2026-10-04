@@ -18,7 +18,15 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// 3. Avoid resolving the same package from two locations.
-config.resolver.disableHierarchicalLookup = true;
+// 3. Resolve nested dependencies too. Some packages (e.g. aws-amplify) install
+//    their own deps under their local node_modules (…/aws-amplify/node_modules/
+//    @aws-amplify/auth). Hierarchical lookup must stay ON so Metro can walk up
+//    to find them; disabling it breaks the aws-amplify web bundle.
+config.resolver.disableHierarchicalLookup = false;
+
+// 4. Honor the "exports" field in package.json. aws-amplify imports subpaths like
+//    "@aws-amplify/auth/cognito" that are only declared via package `exports`
+//    maps; without this, Metro's web bundler can't resolve them.
+config.resolver.unstable_enablePackageExports = true;
 
 module.exports = config;

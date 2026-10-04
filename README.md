@@ -26,7 +26,10 @@ figure is deterministic and traceable to a plan field.
 
 - Node 18+ (built on Node 24)
 - An AWS account with Amazon Bedrock access to a Claude model (for the agent)
-- Expo Go on a phone, or an EAS account for update links
+- A Mac (or any machine) with a browser for the single-device demo — no Xcode,
+  no phone, no networking (see [MAC-DEMO.md](./MAC-DEMO.md)). Expo Go on a phone
+  or an EAS account are optional (only for device/LAN runs or shareable update
+  links).
 
 ## Install
 
@@ -36,14 +39,19 @@ npm install
 
 ## Run the app (demo mode, no backend)
 
+For a single-device demo on a Mac — in the browser, no Xcode, no phone, no
+networking — see **[MAC-DEMO.md](./MAC-DEMO.md)** for exact setup and run steps.
+
 ```bash
-npm run dev            # expo start, from apps/mobile
+npm run demo          # expo start --web — opens in the browser, wrapped in an iPhone frame
 ```
 
-Scan the QR code with Expo Go. With no backend deployed, the app runs in **demo
-mode**: it skips sign-in and shows the seeded Rivera family so every screen is
-usable. The Ask box shows a friendly "not connected" message until the backend
-is deployed.
+With no backend deployed, the app runs in **demo mode**: it skips sign-in and
+shows the seeded Rivera family so every screen is usable. The Ask box shows a
+friendly "not connected" message until the backend is deployed. The web build
+runs entirely over `localhost`, so there is no phone, QR code, or LAN networking
+involved. On web the app is wrapped in an iPhone-shaped frame so it still looks
+like the phone app.
 
 Verify the estimate is at most two taps from Profile: Profile → tap a member →
 **Estimate a visit** (Requirement 7.2).

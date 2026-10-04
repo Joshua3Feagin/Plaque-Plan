@@ -8,6 +8,7 @@ import { paperTheme } from '../theme/colors';
 import { configureAmplify } from '../lib/amplify';
 import { HouseholdProvider } from '../lib/useHousehold';
 import { AuthGate } from '../components/AuthGate';
+import { PhoneFrame } from '../components/PhoneFrame';
 
 // Configure Amplify at module load so sign-in gating is decided before the first
 // render (AuthGate reads isAmplifyConfigured() synchronously). Safe to call
@@ -20,20 +21,22 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <PaperProvider theme={paperTheme}>
           <StatusBar style="light" backgroundColor={paperTheme.colors.primary} />
-          <AuthGate>
-            <HouseholdProvider>
-              <Stack
-                screenOptions={{
-                  headerStyle: { backgroundColor: paperTheme.colors.primary },
-                  headerTintColor: paperTheme.colors.onPrimary,
-                  headerTitleStyle: { fontWeight: '600' },
-                  contentStyle: { backgroundColor: paperTheme.colors.background },
-                }}
-              >
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              </Stack>
-            </HouseholdProvider>
-          </AuthGate>
+          <PhoneFrame>
+            <AuthGate>
+              <HouseholdProvider>
+                <Stack
+                  screenOptions={{
+                    headerStyle: { backgroundColor: paperTheme.colors.primary },
+                    headerTintColor: paperTheme.colors.onPrimary,
+                    headerTitleStyle: { fontWeight: '600' },
+                    contentStyle: { backgroundColor: paperTheme.colors.background },
+                  }}
+                >
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                </Stack>
+              </HouseholdProvider>
+            </AuthGate>
+          </PhoneFrame>
         </PaperProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
