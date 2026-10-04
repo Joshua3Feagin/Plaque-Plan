@@ -5,9 +5,13 @@ node_modules/
 
 # Amplify Gen 2 backend artifacts and generated config
 .amplify/
-amplify_outputs*.json
 amplifyconfiguration*.json
 amplify-build-config.json
+# NOTE: amplify_outputs.json is intentionally COMMITTED so a fresh clone can run
+# against the deployed backend (required for the submission build). It contains
+# only public config (AppSync endpoint, region, Cognito pool/client IDs) — no
+# secrets. Still ignore any other variants (e.g. backups, alt environments).
+amplify_outputs.*.json
 
 # Expo / React Native
 .expo/
