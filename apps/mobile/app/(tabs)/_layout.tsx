@@ -1,31 +1,43 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { brand } from '../../theme/colors';
 
 export default function TabsLayout() {
   const theme = useTheme();
 
   return (
     <Tabs
+      // Each tab manages its own header (most screens have a custom in-page header).
       screenOptions={{
-        tabBarActiveTintColor: theme.colors.primary,
+        headerShown: false,
+        tabBarActiveTintColor: brand.accent, // orange active tab (mockups)
         tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopColor: theme.colors.outline,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
-        headerStyle: { backgroundColor: theme.colors.primary },
-        headerTintColor: theme.colors.onPrimary,
-        headerTitleStyle: { fontWeight: '600' },
+        tabBarLabelStyle: { fontSize: 12 },
       }}
     >
       <Tabs.Screen
-        name="profile"
+        name="home"
         options={{
-          title: 'Profile',
-          headerShown: false,
+          title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-group" color={color} size={size} />
+            <MaterialCommunityIcons name="home-variant" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="benefits"
+        options={{
+          title: 'Benefits',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="shield-plus" color={color} size={size} />
           ),
         }}
       />
@@ -35,6 +47,15 @@ export default function TabsLayout() {
           title: 'Calendar',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="calendar-month" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
         }}
       />
