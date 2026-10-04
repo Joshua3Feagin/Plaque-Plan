@@ -12,6 +12,9 @@ export const brand = {
   onPrimaryContainer: '#FFFFFF',
   secondary: '#B88A00', // warm gold accent
   onSecondary: '#FFFFFF',
+  accent: '#E0531F', // bright orange — active tab, primary CTAs, chips (per mockups)
+  onAccent: '#FFFFFF',
+  accentContainer: '#FDE8DD', // soft orange pill background
   background: '#FBF8F4', // warm off-white
   surface: '#FFFFFF',
   surfaceVariant: '#F1EAE2',

@@ -33,6 +33,7 @@ export default function RootLayout() {
                   }}
                 >
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="find-dentist" options={{ headerShown: false }} />
                 </Stack>
               </HouseholdProvider>
             </AuthGate>
