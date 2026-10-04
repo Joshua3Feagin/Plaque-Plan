@@ -14,6 +14,7 @@ import {
   ListCard,
   AvatarBadge,
 } from '../../components/ui/primitives';
+import { BenefitReminderBanner } from '../../components/BenefitReminderBanner';
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -62,6 +63,8 @@ export default function HomeScreen() {
             <MaterialCommunityIcons name="chevron-right" size={26} color="rgba(255,255,255,0.8)" />
           </View>
         </MaroonHeaderCard>
+
+        <BenefitReminderBanner />
 
         {/* Family members */}
         <SectionHeading

@@ -57,3 +57,6 @@ Plaque-Plan/
 # Derived PDF text extraction output (regenerate with Benefits/extract.py)
 Benefits/_extracted/
 
+# Benefit reminder email outbox (demo previews — not secrets but not source)
+outbox/
+
