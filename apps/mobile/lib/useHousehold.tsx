@@ -115,7 +115,7 @@ export interface HouseholdContextValue {
   /** Price a visit for a member through the engine. */
   estimateFor: (memberId: string, lines: LineInput[]) => ReturnType<typeof estimateVisit> | undefined;
   addMember: (input: AddMemberInput) => string;
-  addTreatmentItem: (input: AddTreatmentItemInput) => void;
+  addTreatmentItem: (input: AddTreatmentItemInput) => string;
   /** All visits: recommended (from optimizer) merged with scheduled overrides. */
   visits: Visit[];
   /** Visits on a given ISO date (YYYY-MM-DD). */
@@ -249,7 +249,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
     return id;
   }, []);
 
-  const addTreatmentItem = useCallback((input: AddTreatmentItemInput) => {
+  const addTreatmentItem = useCallback((input: AddTreatmentItemInput): string => {
     const id = `t-${Date.now()}-${Math.round(Math.random() * 1e6)}`;
     setItems((prev) => [
       ...prev,
@@ -262,6 +262,7 @@ export function HouseholdProvider({ children }: { children: React.ReactNode }) {
         inNetwork: input.inNetwork ?? true,
       },
     ]);
+    return id;
   }, []);
 
   // Derive calendar visits from the optimizer placements. Each placement targets a
