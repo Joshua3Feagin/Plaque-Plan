@@ -3,15 +3,17 @@ import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { agent } from './functions/agent/resource';
+import { kbqa } from './functions/kbqa/resource';
 
 /**
  * Plaque & Plan backend (Amplify Gen 2): Cognito auth + Data (AppSync/DynamoDB) + the
- * Bedrock scheduling agent Lambda (askAgent custom mutation).
+ * Bedrock scheduling agent Lambda (askAgent) + the KB dental Q&A Lambda (askKb).
  */
 const backend = defineBackend({
   auth,
   data,
   agent,
+  kbqa,
 });
 
 // Least-privilege Bedrock access for the agent. The agent uses the US
@@ -32,6 +34,34 @@ backend.agent.resources.lambda.addToRolePolicy(
         (r) => `arn:aws:bedrock:${r}::foundation-model/anthropic.*`,
       ),
       // The inference profile itself (region-scoped to the project region).
+      `arn:aws:bedrock:${region}:${account}:inference-profile/us.anthropic.*`,
+    ],
+  }),
+);
+
+
+
+// Bedrock access for the KB dental Q&A Lambda (askKb). It calls
+// RetrieveAndGenerate / Retrieve on the dental knowledge base and invokes Claude
+// Sonnet 4.5 (via the US inference profile, which may route to the foundation
+// model in us-east-1/2/west-2).
+const KB_ID = '6J1L92S5MT';
+backend.kbqa.resources.lambda.addToRolePolicy(
+  new PolicyStatement({
+    sid: 'AllowBedrockKbRetrieveAndGenerate',
+    actions: [
+      'bedrock:RetrieveAndGenerate',
+      'bedrock:Retrieve',
+      'bedrock:InvokeModel',
+      'bedrock:InvokeModelWithResponseStream',
+      'bedrock:GetInferenceProfile',
+    ],
+    resources: [
+      // The knowledge base.
+      `arn:aws:bedrock:${region}:${account}:knowledge-base/${KB_ID}`,
+      // Foundation models in each region the inference profile may route to.
+      ...routeRegions.map((r) => `arn:aws:bedrock:${r}::foundation-model/anthropic.*`),
+      // The inference profile itself.
       `arn:aws:bedrock:${region}:${account}:inference-profile/us.anthropic.*`,
     ],
   }),

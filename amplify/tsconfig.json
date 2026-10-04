@@ -11,7 +11,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "$amplify/env/agent": ["../.amplify/generated/env/agent.ts"]
+      "$amplify/env/agent": ["../.amplify/generated/env/agent.ts"],
+      "$amplify/env/kbqa": ["../.amplify/generated/env/kbqa.ts"]
     }
   },
   "include": ["**/*.ts"],

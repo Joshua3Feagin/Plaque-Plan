@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { agent } from '../functions/agent/resource';
+import { kbqa } from '../functions/kbqa/resource';
 
 /**
  * Plaque & Plan data schema (Amplify Gen 2 / AppSync + DynamoDB).
@@ -115,6 +116,37 @@ const schema = a.schema({
     .returns(a.ref('AgentReply'))
     .authorization((allow) => [allow.authenticated()])
     .handler(a.handler.function(agent)),
+
+  // --- Knowledge-Base dental Q&A (RetrieveAndGenerate over KB 6J1L92S5MT) ---
+
+  /** A knowledge-base source passage shown under an answer. */
+  KbSource: a.customType({
+    text: a.string().required(),
+    uri: a.string(),
+    score: a.float(),
+  }),
+
+  /** The KB Q&A reply: an answer plus the source passages it came from. */
+  KbReply: a.customType({
+    answer: a.string().required(),
+    sources: a.ref('KbSource').array(),
+    /** 'generated' | 'retrieval-only' | 'error' | 'empty' */
+    mode: a.string().required(),
+  }),
+
+  /**
+   * Ask a dental coverage question answered from the plan-document knowledge
+   * base. Any signed-in user may call it. The Lambda runs RetrieveAndGenerate
+   * and falls back to Retrieve-only when generation is gated.
+   */
+  askKb: a
+    .mutation()
+    .arguments({
+      question: a.string().required(),
+    })
+    .returns(a.ref('KbReply'))
+    .authorization((allow) => [allow.authenticated()])
+    .handler(a.handler.function(kbqa)),
 });
 
 export type Schema = ClientSchema<typeof schema>;
