@@ -29,4 +29,51 @@ config.resolver.disableHierarchicalLookup = false;
 //    maps; without this, Metro's web bundler can't resolve them.
 config.resolver.unstable_enablePackageExports = true;
 
+// 5. Force a single copy of React and the renderer across the whole bundle.
+//    The dependency tree otherwise contains react 18.2.0, 18.3.1 AND 19.x in
+//    nested node_modules (OneDrive scrambled the install); mixing React copies
+//    throws at runtime with "Objects are not valid as a React child". Resolve
+//    each singleton once from the app's perspective, then HARD-REDIRECT every
+//    import of them (including deep ones like "react/jsx-runtime") to that one
+//    copy via resolveRequest — which takes priority over nested node_modules,
+//    unlike extraNodeModules.
+const singletons = ['react', 'react-dom'];
+const singletonRoots = {};
+const singletonEntries = {};
+for (const name of singletons) {
+  try {
+    const pkgJson = require.resolve(`${name}/package.json`, { paths: [projectRoot] });
+    singletonRoots[name] = path.dirname(pkgJson);
+    // The real entry file (honours "main"); used for the bare import case.
+    singletonEntries[name] = require.resolve(name, { paths: [projectRoot] });
+  } catch {
+    // Leave unresolved packages to Metro's default resolution.
+  }
+}
+
+const defaultResolveRequest = config.resolver.resolveRequest;
+config.resolver.resolveRequest = (context, moduleName, platform) => {
+  for (const name of singletons) {
+    const root = singletonRoots[name];
+    if (!root) continue;
+    if (moduleName === name) {
+      // Bare import, e.g. "react" -> the one copy's real entry file.
+      return { type: 'sourceFile', filePath: singletonEntries[name] };
+    }
+    if (moduleName.startsWith(name + '/')) {
+      // Subpath import, e.g. "react/jsx-runtime" -> resolve within the one copy.
+      const subpath = moduleName.slice(name.length + 1);
+      try {
+        const filePath = require.resolve(path.join(root, subpath));
+        return { type: 'sourceFile', filePath };
+      } catch {
+        // Fall through to default resolution if the subpath isn't a file.
+      }
+    }
+  }
+  return defaultResolveRequest
+    ? defaultResolveRequest(context, moduleName, platform)
+    : context.resolveRequest(context, moduleName, platform);
+};
+
 module.exports = config;
