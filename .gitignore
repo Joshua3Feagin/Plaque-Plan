@@ -46,3 +46,10 @@ Thumbs.db
 
 # Local tooling
 coverage/
+
+# Accidental nested clone of this repo (do not track a repo inside the repo)
+Plaque-Plan/
+
+# Derived PDF text extraction output (regenerate with Benefits/extract.py)
+Benefits/_extracted/
+

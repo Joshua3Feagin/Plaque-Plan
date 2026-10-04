@@ -64,9 +64,16 @@ const crownResult = optimizeYear({
 console.log('\nCrown scenario (Sam, two D2740):');
 console.log(`  totalOwed=${crownResult.totalOwed} savings=${crownResult.savings} nextYearMaxLeft=${crownResult.nextYearMaxLeft[sam.key]}`);
 
-assert(crownResult.totalOwed === 1225, 'crown scenario total owed is $1,225 (Req 4.6)');
-assert(crownResult.savings === 275, 'crown scenario savings is $275 (Req 4.6)');
-assert(crownResult.nextYearMaxLeft[sam.key] === 925, "crown scenario leaves $925 of next year's max (Req 4.6)");
+// Real Lincoln DentalConnect High Option ($2,000 annual max). Sam has already used
+// $600, leaving $1,400. Each porcelain crown (D2740) is billed/allowed $1,200 and the
+// plan pays 50% ($600), so the member owes $600 per crown. Both crowns together need
+// only $1,200 of insurer benefit, which fits under the remaining $1,400 this year — so
+// the optimizer books both now, the member owes $1,200 total, and there is no savings
+// from deferring (unlike the smaller fictional plan this replaced). Next year's max is
+// untouched at the full $2,000.
+assert(crownResult.totalOwed === 1200, 'crown scenario total owed is $1,200 (Lincoln High)');
+assert(crownResult.savings === 0, 'crown scenario savings is $0 — both crowns fit this year (Lincoln High)');
+assert(crownResult.nextYearMaxLeft[sam.key] === 2000, "crown scenario leaves the full $2,000 next-year max (Lincoln High)");
 
 // Projected waste across the whole seeded household should be positive.
 const allStates: MemberState[] = MEMBERS.map((m) => ({

@@ -91,7 +91,8 @@ export const PROCEDURES: Procedure[] = [
     code: 'D1351',
     name: 'Sealant - per tooth',
     plainName: 'Sealant',
-    tier: 'preventive',
+    // Iredell At-A-Glance lists sealants under Basic services (85% after deductible).
+    tier: 'basic',
     feeIn: 60,
     feeOut: 75,
     ucr: 68,
@@ -186,34 +187,43 @@ export const CATALOG: Map<string, Procedure> = new Map(
 const DEFAULT_WAIVED: Tier[] = ['preventive'];
 
 /**
- * Two sample plans (fictional names).
- * Coinsurance is the share the INSURER pays per tier.
+ * The two real Lincoln DentalConnect(R) PPO plans for Iredell County Government
+ * (Group ID 1052922), taken from the Benefits At-A-Glance documents.
+ *
+ * Coinsurance is the share the INSURER pays per tier. In these real plans the
+ * in-network and out-of-network coinsurance percentages are identical (the plan
+ * pays the same %); the member's out-of-pocket difference comes from the dentist's
+ * billed fee vs. the plan's allowed amount, which the engine models via feeOut/ucr.
+ *
+ * Per the At-A-Glance: Preventive 100% (no deductible), Basic 85% after
+ * deductible, Major 50% after deductible. Deductible $50 individual / $150 family,
+ * waived for preventive. Annual maximum is combined across preventive/basic/major.
  */
 export const PLANS: Plan[] = [
   {
-    id: 'sample-ppo-plus',
-    name: 'Sample PPO Plus',
-    planYearStartMonth: 1, // January
+    id: 'lincoln-dentalconnect-high',
+    name: 'Lincoln DentalConnect PPO - High Option',
+    planYearStartMonth: 1, // calendar-year plan
+    annualMax: 2000,
+    deductible: 50,
+    deductibleWaivedFor: DEFAULT_WAIVED,
+    coinsIn: { preventive: 1.0, basic: 0.85, major: 0.5 },
+    coinsOut: { preventive: 1.0, basic: 0.85, major: 0.5 },
+  },
+  {
+    id: 'lincoln-dentalconnect-low',
+    name: 'Lincoln DentalConnect PPO - Low Option',
+    planYearStartMonth: 1, // calendar-year plan
     annualMax: 1500,
     deductible: 50,
     deductibleWaivedFor: DEFAULT_WAIVED,
-    coinsIn: { preventive: 1.0, basic: 0.8, major: 0.5 },
-    coinsOut: { preventive: 1.0, basic: 0.7, major: 0.4 },
-  },
-  {
-    id: 'sample-basic',
-    name: 'Sample Basic',
-    planYearStartMonth: 1,
-    annualMax: 1000,
-    deductible: 75,
-    deductibleWaivedFor: DEFAULT_WAIVED,
-    coinsIn: { preventive: 1.0, basic: 0.7, major: 0.4 },
-    coinsOut: { preventive: 1.0, basic: 0.6, major: 0.3 },
+    coinsIn: { preventive: 1.0, basic: 0.85, major: 0.5 },
+    coinsOut: { preventive: 1.0, basic: 0.85, major: 0.5 },
   },
 ];
 
 /** Plan lookup by id. */
 export const PLAN_BY_ID: Map<string, Plan> = new Map(PLANS.map((p) => [p.id, p]));
 
-/** The plan the Rivera demo household is enrolled in. */
-export const DEMO_PLAN_ID = 'sample-ppo-plus';
+/** The plan the Rivera demo household is enrolled in (the High Option). */
+export const DEMO_PLAN_ID = 'lincoln-dentalconnect-high';
